@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-**Manifold** (曾用名: "Layers", "lisct") is a knowledge management and information organization system based on set theory and Lisp-inspired operations. The core concept is to represent all information as sets and their intersections, allowing automatic aggregation and avoiding the limitations of traditional hierarchical or graph-based structures.
+**Manifold** (曾用名: "lisct") is a knowledge management and information organization system based on set theory and Lisp-inspired operations. The core concept is to represent all information as sets and their intersections, allowing automatic aggregation and avoiding the limitations of traditional hierarchical or graph-based structures.
 
 **命名含义**: Manifold（流形）源自数学，表达"同一本体在不同坐标系（视角）下的不同表现"。项目关注的不是组织方法，而是信息的统一本体 - 那个隐藏在各种视角下、让所有信息被联系到一起的存在。
 
@@ -21,10 +21,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ### Solution Architecture - 核心突破
 
 #### 1. **一切皆集合**（Pure Set Model）
-- **关键**: 不存在"内容"这个独立数据类型，所有信息都是集合
+- **关键**: 不存在"内容"这个独立数据类型，所有信息都是集合，就像黑洞的所有信息都可以被包含在其表面上一样，内部没有信息。集合本身就是信息
 - 集合可以包含交集类型的子集
 - 原子集合：不再细分的最小信息单元，也是集合
 - 类比：原子不是"不同类型的东西"，只是"不再细分的粒子"
+- **集合的特性**： 交换律，比如存在 (A,B,C)之后，在B下，因为省略的原因，就会看到(A,C)，AC的顺序是没有变化的；而且有一个恨好的应用，在阅读别人分享的知识树的时候，只要在某个节点上添加自己的内容，比如“JS”，那么这个树的整个路径都会作为 JS 的子集，被自动收集到自己的JS笔记里面。
 
 #### 2. **视角相对的树结构**（Perspective-Relative Trees）
 用户在 React 视角下创建大纲：
@@ -59,13 +60,13 @@ Hooks                     Closure
 - 进阶功能，不强制暴露给基础用户
 - 代表用户层的底层实现
 - 用户可以无限扩展使用方式，让应用完全适应自己
-- Example: `(.chat @alice @bob)` creates a chat collection with two users
+- Example: `(.chat @alice @bob)` creates a chat collection with two users, infact it creates a set: ((internal chat) (internal user alice) (internal user bob)).
 
 ### 用户交互模型（User Interaction Model）
 
 #### 基础操作：大纲编辑器
 - **换行**: 创建同级节点
-- **Tab 缩进**: 创建下级节点
+- **Tab 缩进**: 创建下级节点，或者说创建一个隐藏了上级信息的交集
 - **路径即交集**: 从根到叶的路径上所有元素构成该信息的集合成员
 - 示例：在 `React > Hooks > Closure` 下输入内容，自动创建交集 `(React, Hooks, Closure)`
 
@@ -126,6 +127,7 @@ The project name and architecture draw from multiple conceptual sources:
   - 每个部分包含整体的信息，"一花一世界"
 - **Wormholes**: Intersections as connections between universes (sets)
 - **Universal interconnection**: All things are related and influence each other
+- 包含什么，就会被什么所包含
 - **Manifold (流形)**: Same entity, different coordinate systems (perspectives)
 
 Naming considerations: overlapping, bridges, wormholes, layers, lists, unity, holography
@@ -210,7 +212,7 @@ When implementing this system:
    - 原子集合是最小不可分的信息单元
    - 数据模型必须保持类型统一
 
-2. **路径即交集**: 从根到节点的路径上所有元素构成该信息的集合成员
+2. **树状大纲视图是对每一个集合做递归的省略父集的最近子集展开**: 从根到节点的路径上所有元素构成该信息的集合成员
    - 例如：`React > Hooks > Closure` 自动创建交集 `(React, Hooks, Closure)`
    - 交集满足交换律：`(React, Hooks)` 等同于 `(Hooks, React)`
 
@@ -221,6 +223,9 @@ When implementing this system:
 4. **嵌套集合支持**: 支持 `((King, son) Prince)` 这样的复合概念
    - 用于表达更精确的包含关系
    - 避免歧义（如区分 "son - King" 和 "(King, son)"）
+
+5. **lisp的同像性**：支持像lisp那样，使用list来表示集合和交集，也可以使用list来表达操作这些list的程序。
+   - 于是就可以实现”待办应用“、”flash card“等应用或者小插件。也可以灵活地封装自己对于列表的操作。
 
 #### 技术实现要点
 5. **索引和查询**:
@@ -238,6 +243,7 @@ When implementing this system:
    - 不强制暴露给基础用户
    - 用于元编程和自动化
    - 示例：`(.chat @alice @bob)`, `(intersection React 进阶)`
+   - 这些是所有数据的底层实现，虽然用户可以不用在乎，但是整个应用有着简单一致的可以无限扩展的底层。
 
 8. **性能考虑**:
    - 大规模数据（1000+ 节点）时的视角切换速度
