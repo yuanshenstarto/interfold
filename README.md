@@ -1,52 +1,29 @@
-# Interfold
+# Create T3 App
 
-**Where knowledge folds together**
+This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
----
+## What's next? How do I make an app with this?
 
-## Overview
+We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
 
-Interfold is a knowledge management system based on **Manifold theory** and set theory. It allows you to organize information from multiple perspectives simultaneously, without the limitations of traditional hierarchical structures.
+If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
 
-## Core Concept
+- [Next.js](https://nextjs.org)
+- [NextAuth.js](https://next-auth.js.org)
+- [Prisma](https://prisma.io)
+- [Drizzle](https://orm.drizzle.team)
+- [Tailwind CSS](https://tailwindcss.com)
+- [tRPC](https://trpc.io)
 
-> **Same information, infinite perspectives**
+## Learn More
 
-Built on the mathematical concept of manifolds, Interfold treats all information as sets and their intersections. Each piece of knowledge can be viewed from any relevant angle, automatically reorganizing into different tree structures based on your current perspective.
+To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
 
-## Key Features
+- [Documentation](https://create.t3.gg/)
+- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
 
-- 🌐 **Multi-perspective views**: Access the same information from different conceptual angles
-- 🔄 **Automatic aggregation**: Related content automatically appears in all relevant contexts
-- 📊 **Sparse hypergraph model**: Efficient representation of complex knowledge relationships
-- 🎯 **Zero cognitive overhead**: Works like a traditional outliner, but with superpowers
+You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
 
-## Example
+## How do I deploy this?
 
-Create once:
-```
-React > Hooks > Closure
-```
-
-Access from multiple perspectives:
-- **React perspective**: See Hooks-related content
-- **Hooks perspective**: See all Hooks patterns
-- **Closure perspective**: See closure concepts across all frameworks
-
-Same information, automatically organized differently based on your viewpoint.
-
-## Status
-
-🚧 Early planning/design phase - no implementation yet
-
-## Documentation
-
-See [CLAUDE.md](./CLAUDE.md) for comprehensive design documentation and [naming.md](./naming.md) for naming exploration history.
-
-## Philosophy
-
-Interfold is built on the principle that knowledge is like a manifold - a unified whole that appears different when viewed from different coordinate systems (perspectives). The name "Interfold" captures the folding and unfolding of dimensions as you navigate between these perspectives.
-
----
-
-**Built with ❤️ based on Manifold theory**
+Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.

@@ -9,7 +9,7 @@
 │                                                    │                         │
 │       Sonnet 4.5 · Claude Pro ·                    │                         │
 │       yuanshenstarto@gmail.com's Organization      │                         │
-│           ~/develop/Yuanshenstarto/layers          │                         │
+│           @/develop/Yuanshenstarto/layers          │                         │
 ╰──────────────────────────────────────────────────────────────────────────────╯
 
   A gift for you

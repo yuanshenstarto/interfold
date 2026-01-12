@@ -1,7 +1,13 @@
 {
   "permissions": {
     "allow": [
-      "Bash(wc:*)"
+      "Bash(wc:*)",
+      "Bash(echo:*)",
+      "Bash(sudo chown:*)",
+      "Bash(npm uninstall:*)",
+      "Bash(npm install:*)",
+      "Bash(claude --version)",
+      "Bash(git reset:*)"
     ]
   }
 }

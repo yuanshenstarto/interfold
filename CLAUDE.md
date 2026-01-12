@@ -12,7 +12,143 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **核心理念**: 项目关注的不是组织方法，而是信息的统一本体 - 那个隐藏在各种视角下、让所有信息被联系到一起的存在
 - **品牌定位**: Interfold（产品层）+ Manifold（架构层）= 完整的技术与品牌故事
 
-**Current Status**: Early planning/design phase - no implementation code exists yet.
+**Current Status**: Implementation in progress using T3 Stack (Next.js, tRPC, Drizzle ORM, Better Auth).
+
+---
+
+## Tech Stack & Development
+
+### Technology Stack
+This project is built with the [T3 Stack](https://create.t3.gg/):
+- **Next.js 15** - React framework with App Router
+- **tRPC 11** - End-to-end typesafe APIs
+- **Drizzle ORM** - TypeScript ORM for PostgreSQL
+- **Better Auth** - Authentication with GitHub OAuth support
+- **TanStack Query** - Data fetching and caching
+- **Tailwind CSS v4** - Styling
+- **Biome** - Linting and formatting
+- **TypeScript 5** - Type safety
+- **pnpm** - Package manager
+
+### Project Structure
+```
+src/
+├── app/                          # Next.js App Router
+│   ├── api/
+│   │   ├── auth/[...all]/       # Better Auth API routes
+│   │   └── trpc/[trpc]/         # tRPC API handler
+│   ├── _components/             # Server components
+│   ├── layout.tsx               # Root layout
+│   └── page.tsx                 # Home page
+├── server/
+│   ├── api/
+│   │   ├── routers/             # tRPC route handlers
+│   │   ├── root.ts              # Root tRPC router
+│   │   └── trpc.ts              # tRPC setup & procedures
+│   ├── better-auth/             # Authentication configuration
+│   │   ├── config.ts            # Better Auth setup
+│   │   ├── client.ts            # Client-side auth
+│   │   └── server.ts            # Server-side auth
+│   └── db/
+│       ├── schema.ts            # Database schema (Drizzle)
+│       └── index.ts             # Database client
+├── trpc/
+│   ├── react.tsx                # tRPC React Query setup
+│   ├── server.ts                # Server-side tRPC caller
+│   └── query-client.ts          # Query client config
+└── env.js                       # Environment variable validation
+```
+
+### Common Commands
+
+**Development**:
+```bash
+pnpm dev              # Start development server with Turbopack
+pnpm build            # Build for production
+pnpm start            # Start production server
+pnpm preview          # Build and start production server
+```
+
+**Code Quality**:
+```bash
+pnpm check            # Run Biome linter and formatter checks
+pnpm check:write      # Auto-fix safe issues
+pnpm check:unsafe     # Auto-fix including unsafe changes
+pnpm typecheck        # Run TypeScript type checking
+```
+
+**Database**:
+```bash
+./start-database.sh   # Start local PostgreSQL in Docker
+pnpm db:push          # Push schema changes to database
+pnpm db:generate      # Generate migrations
+pnpm db:migrate       # Run migrations
+pnpm db:studio        # Open Drizzle Studio (database GUI)
+```
+
+### Environment Setup
+
+1. **Copy environment template**:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. **Required environment variables** (see `.env.example`):
+   - `DATABASE_URL` - PostgreSQL connection string
+   - `BETTER_AUTH_SECRET` - Secret for session signing (production only)
+   - `BETTER_AUTH_GITHUB_CLIENT_ID` - GitHub OAuth app ID
+   - `BETTER_AUTH_GITHUB_CLIENT_SECRET` - GitHub OAuth secret
+
+3. **Start local database**:
+   ```bash
+   ./start-database.sh  # Starts PostgreSQL in Docker
+   pnpm db:push         # Initialize database schema
+   ```
+
+### Architecture Notes
+
+**tRPC Setup**:
+- Context includes database client and user session from Better Auth
+- `publicProcedure` - Available to all users (session optional)
+- `protectedProcedure` - Requires authentication
+- Includes timing middleware with artificial delay in development (100-500ms) to catch waterfall issues
+
+**Authentication**:
+- Better Auth configured with email/password and GitHub OAuth
+- Session data available in tRPC context via `ctx.session`
+- Protected routes check `ctx.session?.user` existence
+
+**Database**:
+- PostgreSQL with Drizzle ORM
+- Table prefix: `pg-drizzle_*` (configured in schema.ts)
+- Tables: `user`, `session`, `account`, `verification`, `post`
+- Uses relations API for type-safe joins
+
+**Path Aliases**:
+- `~/` maps to `src/` (configured in tsconfig.json)
+- Example: `import { db } from "~/server/db"`
+
+### Development Workflow
+
+1. **Starting development**:
+   ```bash
+   ./start-database.sh  # Start database (first time)
+   pnpm dev             # Start Next.js dev server
+   ```
+
+2. **Making database changes**:
+   - Edit `src/server/db/schema.ts`
+   - Run `pnpm db:push` to apply changes
+   - Or use `pnpm db:generate` + `pnpm db:migrate` for migration files
+
+3. **Adding tRPC endpoints**:
+   - Create/edit routers in `src/server/api/routers/`
+   - Export from `src/server/api/root.ts`
+   - Use in components via `api.routerName.procedureName.useQuery()`
+
+4. **Code formatting**:
+   - Biome runs automatically on save (if IDE configured)
+   - Manual: `pnpm check:write`
 
 ---
 
@@ -618,8 +754,33 @@ When implementing this system:
    - 实时更新所有相关视图
    - 考虑使用增量计算和虚拟化渲染
 
-### No Build/Test Commands Yet
-This repository has no build system, package manager, or test framework configured. These will need to be established as implementation begins.
+## Implementation Guidelines
+
+When implementing Interfold features:
+
+1. **Database Schema for Hypergraph**:
+   - Create tables for atomic sets (vertices) and intersections (hyperedges)
+   - Index atomic sets for fast lookups
+   - Store intersection elements as array/JSONB for flexible querying
+   - Consider `created_via_path` for preserving user's original perspective
+
+2. **API Design**:
+   - Create tRPC routers for set operations (create, query, delete)
+   - Implement perspective switching logic server-side
+   - Use TanStack Query for caching perspective trees
+   - Consider real-time updates for collaborative features
+
+3. **UI Components Priority** (MVP):
+   - Outliner component (Tab/Shift+Tab for indent/dedent)
+   - Perspective switcher (context menu or button)
+   - Breadcrumb navigation
+   - Search/filter for atomic sets
+
+4. **Performance Considerations**:
+   - Implement inverted index: atomic_set_id → list of intersection_ids
+   - Cache frequently accessed perspectives
+   - Use virtual scrolling for large outlines
+   - Lazy load intersection details
 
 ## Git Information
 - Remote: `git@github.com-work:yuanshenstarto/layers.git`
