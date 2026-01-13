@@ -7,7 +7,9 @@
       "Bash(npm uninstall:*)",
       "Bash(npm install:*)",
       "Bash(claude --version)",
-      "Bash(git reset:*)"
+      "Bash(git reset:*)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: establish project constitution v1.0.0\n\n- Define 7 core principles: type safety, test-first, performance, UX, manifold integrity, progressive complexity, code quality\n- Lock technical stack requirements \\(T3 Stack: Next.js, tRPC, Drizzle, Better Auth\\)\n- Establish development workflow and governance procedures\n- Align with Interfold''s manifold theory foundations and \"zero cognitive burden\" philosophy\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
     ]
   }
 }
