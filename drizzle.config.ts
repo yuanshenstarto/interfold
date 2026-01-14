@@ -8,5 +8,5 @@ export default {
   dbCredentials: {
     url: env.DATABASE_URL,
   },
-  tablesFilter: ["interfold_*"],
+  tablesFilter: ["pg-drizzle_*"],
 } satisfies Config;

@@ -785,3 +785,10 @@ When implementing Interfold features:
 ## Git Information
 - Remote: `git@github.com-work:yuanshenstarto/layers.git`
 - Main branch: `main`
+
+## Active Technologies
+- TypeScript 5 (strict mode), React 19, Node.js 20+ + Next.js 15 (App Router), tRPC 11, Drizzle ORM 0.41, Better Auth 1.3, TanStack Query 5.69, Tailwind CSS v4 (001-outline-editor)
+- PostgreSQL 16+ with Drizzle ORM (already configured via `start-database.sh`) (001-outline-editor)
+
+## Recent Changes
+- 001-outline-editor: Added TypeScript 5 (strict mode), React 19, Node.js 20+ + Next.js 15 (App Router), tRPC 11, Drizzle ORM 0.41, Better Auth 1.3, TanStack Query 5.69, Tailwind CSS v4

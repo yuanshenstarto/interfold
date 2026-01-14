@@ -9,7 +9,25 @@
       "Bash(claude --version)",
       "Bash(git reset:*)",
       "Bash(git add:*)",
-      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: establish project constitution v1.0.0\n\n- Define 7 core principles: type safety, test-first, performance, UX, manifold integrity, progressive complexity, code quality\n- Lock technical stack requirements \\(T3 Stack: Next.js, tRPC, Drizzle, Better Auth\\)\n- Establish development workflow and governance procedures\n- Align with Interfold''s manifold theory foundations and \"zero cognitive burden\" philosophy\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")"
+      "Bash(git commit -m \"$\\(cat <<''EOF''\ndocs: establish project constitution v1.0.0\n\n- Define 7 core principles: type safety, test-first, performance, UX, manifold integrity, progressive complexity, code quality\n- Lock technical stack requirements \\(T3 Stack: Next.js, tRPC, Drizzle, Better Auth\\)\n- Establish development workflow and governance procedures\n- Align with Interfold''s manifold theory foundations and \"zero cognitive burden\" philosophy\n\nCo-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>\nEOF\n\\)\")",
+      "Bash(git fetch:*)",
+      "Bash(find:*)",
+      "Bash(.specify/scripts/bash/create-new-feature.sh:*)",
+      "Bash(.specify/scripts/bash/setup-plan.sh:*)",
+      "Bash(.specify/scripts/bash/update-agent-context.sh:*)",
+      "Bash(.specify/scripts/bash/check-prerequisites.sh:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(pnpm add:*)",
+      "Bash(pnpm test:*)",
+      "Bash(pnpm db:push:*)",
+      "Bash(./start-database.sh:*)",
+      "Bash(pkill:*)",
+      "Bash(pnpm db:generate:*)",
+      "Bash(pnpm db:migrate:*)",
+      "Bash(npx tsx:*)",
+      "Bash(source .env)",
+      "Bash(DATABASE_URL='postgresql://neondb_owner:npg_KFVtv4s1gdXp@ep-divine-frost-a1m0tzco-pooler.ap-southeast-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require' node --eval \"\nconst postgres = require\\(''postgres''\\);\nconst fs = require\\(''fs''\\);\nconst path = require\\(''path''\\);\n\nconst sql = postgres\\(process.env.DATABASE_URL\\);\n\n\\(async \\(\\) => {\n  try {\n    const migrationSQL = fs.readFileSync\\(path.join\\(process.cwd\\(\\), ''drizzle/0001_manifold_tables.sql''\\), ''utf-8''\\);\n    await sql.unsafe\\(migrationSQL\\);\n    console.log\\(''✓ Migration successful!''\\);\n  } catch \\(error\\) {\n    console.error\\(''Migration failed:'', error.message\\);\n  } finally {\n    await sql.end\\(\\);\n  }\n}\\)\\(\\);\n\")",
+      "Bash(pnpm typecheck:*)"
     ]
   }
 }

@@ -1,4 +1,7 @@
 import { postRouter } from "~/server/api/routers/post";
+import { atomicSetRouter } from "~/server/api/routers/atomicSet";
+import { intersectionRouter } from "~/server/api/routers/intersection";
+import { outlineRouter } from "~/server/api/routers/outline";
 import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
 
 /**
@@ -8,6 +11,9 @@ import { createCallerFactory, createTRPCRouter } from "~/server/api/trpc";
  */
 export const appRouter = createTRPCRouter({
   post: postRouter,
+  atomicSet: atomicSetRouter,
+  intersection: intersectionRouter,
+  outline: outlineRouter,
 });
 
 // export type definition of API
