@@ -97,9 +97,9 @@ export const createOutlineNodeSchema = z.object({
   parentId: z.string().uuid("Invalid parent ID").nullable(),
   content: z
     .string()
-    .min(1, "Content must not be empty")
     .max(5000, "Content must not exceed 5000 characters")
-    .trim(),
+    .trim()
+    .default(""),
   orderIndex: z.number().int().nonnegative().optional(),
 });
 

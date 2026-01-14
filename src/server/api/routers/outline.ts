@@ -11,6 +11,7 @@ import {
   createOutlineNodeSchema,
   updateNodeContentSchema,
   getNodeByIdSchema,
+  moveNodeSchema,
 } from "~/lib/outline/validation";
 import { buildTree, getNextOrderIndex } from "~/lib/outline/utils";
 
@@ -41,7 +42,7 @@ export const outlineRouter = createTRPCRouter({
   createNode: protectedProcedure
     .input(createOutlineNodeSchema)
     .mutation(async ({ ctx, input }) => {
-      const trimmedContent = input.content.trim();
+      const trimmedContent = input.content?.trim() || "";
 
       // Verify parent exists if parentId is provided
       if (input.parentId) {
@@ -154,6 +155,80 @@ export const outlineRouter = createTRPCRouter({
           message: "Node not found",
         });
       }
+
+      return result[0]!;
+    }),
+
+  /**
+   * Move node to new parent and position
+   * Used for indenting (Tab) and outdenting (Shift+Tab)
+   */
+  moveNode: protectedProcedure
+    .input(moveNodeSchema)
+    .mutation(async ({ ctx, input }) => {
+      // Verify node exists and belongs to user
+      const node = await ctx.db
+        .select()
+        .from(outlineNodes)
+        .where(
+          and(
+            eq(outlineNodes.id, input.id),
+            eq(outlineNodes.userId, ctx.session.user.id)
+          )
+        )
+        .limit(1);
+
+      if (node.length === 0) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Node not found",
+        });
+      }
+
+      // Verify new parent exists if provided
+      if (input.newParentId) {
+        const parent = await ctx.db
+          .select()
+          .from(outlineNodes)
+          .where(
+            and(
+              eq(outlineNodes.id, input.newParentId),
+              eq(outlineNodes.userId, ctx.session.user.id)
+            )
+          )
+          .limit(1);
+
+        if (parent.length === 0) {
+          throw new TRPCError({
+            code: "NOT_FOUND",
+            message: "Parent node not found",
+          });
+        }
+
+        // Prevent circular relationships (node cannot be parent of itself or its ancestors)
+        if (input.newParentId === input.id) {
+          throw new TRPCError({
+            code: "BAD_REQUEST",
+            message: "Node cannot be its own parent",
+          });
+        }
+      }
+
+      // Move node
+      const result = await ctx.db
+        .update(outlineNodes)
+        .set({
+          parentId: input.newParentId,
+          orderIndex: input.newOrderIndex,
+          updatedAt: new Date(),
+        })
+        .where(
+          and(
+            eq(outlineNodes.id, input.id),
+            eq(outlineNodes.userId, ctx.session.user.id)
+          )
+        )
+        .returning();
 
       return result[0]!;
     }),

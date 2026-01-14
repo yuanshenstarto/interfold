@@ -8,6 +8,19 @@
 import { api } from "~/trpc/react";
 import { OutlineNode } from "./OutlineNode";
 import { useState } from "react";
+import type { OutlineNodeWithChildren } from "~/lib/outline/types";
+
+// Flatten tree to get all nodes for sibling lookup
+function flattenNodes(nodes: OutlineNodeWithChildren[]): OutlineNodeWithChildren[] {
+  const result: OutlineNodeWithChildren[] = [];
+  for (const node of nodes) {
+    result.push(node);
+    if (node.children.length > 0) {
+      result.push(...flattenNodes(node.children));
+    }
+  }
+  return result;
+}
 
 export function OutlineEditor() {
   const [focusedNodeId, setFocusedNodeId] = useState<string | null>(null);
@@ -42,12 +55,13 @@ export function OutlineEditor() {
   }
 
   const nodes = data?.nodes ?? [];
+  const allNodes = flattenNodes(nodes);
 
   // Handle creating the first root node
   const handleCreateRootNode = () => {
     createNodeMutation.mutate({
       parentId: null,
-      content: "New note",
+      content: "",
     });
   };
 
@@ -78,6 +92,7 @@ export function OutlineEditor() {
             depth={0}
             isFocused={focusedNodeId === node.id}
             onFocus={() => setFocusedNodeId(node.id)}
+            allNodes={allNodes}
           />
         ))}
       </div>

@@ -16,6 +16,7 @@ interface OutlineNodeProps {
   depth: number;
   isFocused: boolean;
   onFocus: () => void;
+  allNodes?: OutlineNodeWithChildren[]; // For finding siblings
 }
 
 export function OutlineNode({
@@ -23,6 +24,7 @@ export function OutlineNode({
   depth,
   isFocused,
   onFocus,
+  allNodes = [],
 }: OutlineNodeProps) {
   const [content, setContent] = useState(node.content);
   const [saveStatus, setSaveStatus] = useState<"saved" | "saving" | "idle">(
@@ -60,6 +62,26 @@ export function OutlineNode({
     },
   });
 
+  // Mutation for moving node (indent/outdent)
+  const moveNodeMutation = api.outline.moveNode.useMutation({
+    onSuccess: () => {
+      // Refetch outline after moving node
+      void utils.outline.getUserOutline.invalidate();
+    },
+  });
+
+  // Helper: Find previous sibling node
+  const findPreviousSibling = (): OutlineNodeWithChildren | null => {
+    // Get all siblings (nodes with same parent)
+    const siblings = allNodes.filter(n => n.parentId === node.parentId);
+    const currentIndex = siblings.findIndex(n => n.id === node.id);
+
+    if (currentIndex > 0) {
+      return siblings[currentIndex - 1]!;
+    }
+    return null;
+  };
+
   // Debounced auto-save (2 second delay)
   const debouncedSave = useDebouncedCallback((newContent: string) => {
     if (newContent.trim() && newContent !== node.content) {
@@ -84,20 +106,32 @@ export function OutlineNode({
   // Keyboard shortcuts
   const keyboardHandlers = useOutlineKeyboard({
     onEnter: () => {
-      // Create sibling node after current node
+      // Create sibling node after current node with blank content
       createNodeMutation.mutate({
         parentId: node.parentId,
-        content: "New note",
+        content: "",
         orderIndex: node.orderIndex + 1,
       });
     },
     onTab: () => {
-      // Phase 2: Indent node
-      console.log("Tab pressed - indent");
+      // Indent node: make it a child of previous sibling
+      const previousSibling = findPreviousSibling();
+
+      if (previousSibling) {
+        // Move current node to be a child of previous sibling
+        moveNodeMutation.mutate({
+          id: node.id,
+          newParentId: previousSibling.id,
+          newOrderIndex: previousSibling.children.length, // Add as last child
+        });
+      }
     },
     onShiftTab: () => {
-      // Phase 2: Outdent node
-      console.log("Shift+Tab pressed - outdent");
+      // Outdent node: make it a sibling of parent
+      if (node.parentId) {
+        // TODO: Implement in Phase 4
+        console.log("Shift+Tab pressed - outdent");
+      }
     },
   });
 
@@ -149,6 +183,7 @@ export function OutlineNode({
               depth={depth + 1}
               isFocused={false}
               onFocus={() => {}}
+              allNodes={allNodes}
             />
           ))}
         </div>
